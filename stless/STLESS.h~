@@ -1,0 +1,37 @@
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+#ifndef _CONNAC_H_
+#define _CONNAC_H_
+
+#include "myConnMessage.pb-c.h"
+#include "myActionMessage.pb-c.h"
+#include <stdint.h>
+#include <sys/time.h>
+#include <pcap/pcap.h>
+
+
+
+//from connac_state.c
+extern int drop;
+
+///// FUNCTION PROTOTYPES ////////////////////////////////////////////////////
+//shared library export
+
+int conn_send_perflow(uint8_t* buf, int len);
+int action_send_perflow(uint8_t* buf, int len);
+int connac_init();
+int connac_cleanup();
+
+
+void connac_notify_packet_received(char *type, struct timeval *recv_time);
+void connac_notify_flow_created();
+void connac_notify_flow_destroyed();
+
+
+#endif
+
+#ifdef __cplusplus
+}
+#endif
