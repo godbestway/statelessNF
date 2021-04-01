@@ -1,0 +1,19 @@
+<configuration>
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender"> #控制台输出
+        <encoder>
+            <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern> #输出格式
+        </encoder>
+    </appender>
+
+    <appender name="FILE" class="ch.qos.logback.core.FileAppender"> #文件输出
+        <file>logs/test.log</file>  #文件路径
+        <encoder>
+            <pattern>%d [%thread] %-5level %logger{36} [%file : %line] - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <root level="INFO"> #最低日志输出级别
+        <appender-ref ref="STDOUT" /> #配置appender后，配置才会生效，ref的值是上面的appender的name值
+        <appender-ref ref="FILE" />
+    </root>
+</configuration>
