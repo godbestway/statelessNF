@@ -12,5 +12,4 @@ RedisServerPass=123456
 
 #IsRedisBackup
 IsRedisBackup=1
-
 #RedisServerConfigEnd

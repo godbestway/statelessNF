@@ -1361,6 +1361,8 @@ int main(int argc, char *argv[])
     int32_t rc = 0;
     int ch = 0, verbose_already = 0;
 
+    connac_init();
+
 	if(initRedisConfig() != 1){
 		printf("initRedisError\n");
 		exit(1);
@@ -1503,7 +1505,7 @@ int main(int argc, char *argv[])
     cxt_init();
 
 
-    connac_init();
+    //connac_init();
 
 //+++
     bzero(&stless_stats, sizeof(stless_stats));

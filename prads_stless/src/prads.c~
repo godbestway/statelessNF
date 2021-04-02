@@ -160,6 +160,7 @@ void got_packet(u_char * useless, const struct pcap_pkthdr *pheader,
 //+++
 
 	configSet();
+	statisticSet();
     return;
 }
 
