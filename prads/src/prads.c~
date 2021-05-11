@@ -28,6 +28,7 @@
 #include <malloc.h>
 #endif
 
+#include <sys/time.h>
 #include "common.h"
 #include "prads.h"
 #include "config.h"
@@ -44,10 +45,6 @@
 //#include "output-plugins/log_init.h"
 #include "output-plugins/log.h"
 
-#include <STLESS.h>
-#include <pcap/pcap.h>
-#include <sys/time.h>
-
 #ifndef CONFDIR
 #define CONFDIR "/etc/prads/"
 #endif
@@ -62,10 +59,6 @@ time_t tstamp;
 servicelist *services[MAX_PORTS];
 int inpacket, gameover, intr_flag;
 int nets = 1;
-
-//+++
-extern STLESSStatistics stless_stats;
-//+++
 
 fmask network[MAX_NETS];
 
@@ -110,10 +103,12 @@ inline int filter_packet(const int af, void *ip);
 void got_packet(u_char * useless, const struct pcap_pkthdr *pheader,
                 const u_char * packet)
 {
-//+++
-    struct timeval recv_time;
-    gettimeofday(&recv_time, NULL);
-//+++
+    struct timeval start_serialize, end_serialize;
+   gettimeofday(&start_serialize, NULL);
+   printf("STATS: PERFLOW: start_serialize.tv_sec = %lds\n", start_serialize.tv_sec);	
+   printf("STATS: PERFLOW: start_serialize.tv_usec = %ldus\n", start_serialize.tv_usec);
+   
+
     config.pr_s.got_packets++;
     packetinfo pstruct = {0};
     packetinfo *pi = &pstruct;
@@ -149,18 +144,25 @@ void got_packet(u_char * useless, const struct pcap_pkthdr *pheader,
     if (!pi->our) vlog(0x3, "Not our network packet. Tracked, but not logged.\n");
 #endif
     inpacket = 0;
-//+++
-     if (htons(80) == pi->s_port || htons(80) == pi->d_port)
-     { stless_notify_packet_received("HTTP", &recv_time); }
-     else if (htons(443) == pi->s_port || htons(443) == pi->d_port)
-     { stless_notify_packet_received("HTTPS", &recv_time); }
-     else
-     { stless_notify_packet_received("UNKNOWN", &recv_time); }
-
-//+++
-
 	configSet();
-	statisticSet();
+
+     gettimeofday(&end_serialize, NULL);
+    long sec = end_serialize.tv_sec - start_serialize.tv_sec;
+    long usec = end_serialize.tv_usec - start_serialize.tv_usec;
+    long total = (sec * 1000 * 1000) + usec;
+			
+    printf("STATS: PERFLOW: TIME TO process packet = %ldus\n", total);
+    printf("STATS: PERFLOW: TIME TO finish = %ldus\n", end_serialize.tv_sec);	
+    printf("STATS: PERFLOW: TIME TO finish = %ldus\n", end_serialize.tv_usec);
+
+    /*if(config.pr_s.tcp_recv == 1){
+	struct timeval finish_time;
+	gettimeofday(&finish_time, NULL);
+	printf("STATS: PERFLOW: TIME TO finish = %ldus\n", finish_time.tv_sec);	
+	printf("STATS: PERFLOW: TIME TO finish = %ldus\n", finish_time.tv_usec);	
+	game_over();
+	
+	}*/
     return;
 }
 
@@ -1361,12 +1363,11 @@ int main(int argc, char *argv[])
     int32_t rc = 0;
     int ch = 0, verbose_already = 0;
 
-    connac_init();
-
 	if(initRedisConfig() != 1){
 		printf("initRedisError\n");
 		exit(1);
 	};
+
 
 	if(isBackup() == 1){
 		while(1){
@@ -1503,23 +1504,12 @@ int main(int argc, char *argv[])
     pcap_freecode(&cfilter);
 
     cxt_init();
-
-
-    //connac_init();
-
-//+++
-    bzero(&stless_stats, sizeof(stless_stats));
-//+++
-
     olog("[*] Sniffing...\n");
 
 	if(configGet()!=1){
 		printf("currentRedisNotGetConfigPr_s\n");
 	}
    
-	if(statisticGet()!=1){
-		printf("statistic get not nothing\n");
-	}
 	
     pcap_loop(config.handle, -1, got_packet, NULL);
 

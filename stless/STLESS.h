@@ -19,6 +19,9 @@ extern int drop;
 ///// FUNCTION PROTOTYPES ////////////////////////////////////////////////////
 //shared library export
 
+//TODO
+//change name to stless
+
 int conn_send_perflow(uint8_t* buf, int len);
 int action_send_perflow(uint8_t* buf, int len);
 int connac_init();

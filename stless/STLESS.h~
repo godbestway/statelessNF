@@ -25,10 +25,6 @@ int connac_init();
 int connac_cleanup();
 
 
-void connac_notify_packet_received(char *type, struct timeval *recv_time);
-void connac_notify_flow_created();
-void connac_notify_flow_destroyed();
-
 
 #endif
 

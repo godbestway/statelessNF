@@ -11,5 +11,5 @@ RedisServerPort=6379
 RedisServerPass=123456
 
 #IsRedisBackup
-IsRedisBackup=1
+IsRedisBackup=0
 #RedisServerConfigEnd

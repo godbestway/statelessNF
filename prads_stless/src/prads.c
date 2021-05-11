@@ -1505,7 +1505,6 @@ int main(int argc, char *argv[])
     cxt_init();
 
 
-    //connac_init();
 
 //+++
     bzero(&stless_stats, sizeof(stless_stats));
